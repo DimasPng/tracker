@@ -1,0 +1,49 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    volumes:
+      - .:/var/www/html
+    ports:
+      - '${APP_PORT:-8080}:80'
+    depends_on:
+      - php-fpm
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  php-fpm:
+    build:
+      context: ./docker/app
+    volumes:
+      - .:/var/www/html
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.3
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-root}'
+      MYSQL_DATABASE: '${DB_DATABASE:-app_db}'
+      MYSQL_USER: '${DB_USERNAME:-app_user}'
+      MYSQL_PASSWORD: '${DB_PASSWORD:-root}'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - mynetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      retries: 3
+      timeout: 5s
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+
+networks:
+  mynetwork:
+    driver: bridge
