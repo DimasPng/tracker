@@ -63,3 +63,17 @@ database/          # Migrations & seeds
 - **Frontend**: HTML, CSS (Tailwind), JavaScript
 - **Infrastructure**: Docker, Docker Compose
 - **Build Tools**: Make, npm
+
+## Screenshots
+
+### Registration Page
+![Registration Page](docs/screens/register-page.png)
+
+### Page A
+![Page A](docs/screens/page-a.png)
+
+### Page B
+![Page B](docs/screens/page-b.png)
+
+### Reports Page
+![Reports Page](docs/screens/report-page.png)
