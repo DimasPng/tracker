@@ -1,0 +1,33 @@
+parameters:
+    level: 7
+    paths:
+        - src
+        - config
+        - routes
+        - database
+    
+    memoryLimitFile: .phpstan-memory-limit
+    
+    excludePaths:
+        - '*/vendor/*'
+        - '*/composer.phar'
+    
+    ignoreErrors:
+        - '#Anonymous class#'
+        
+        - '#no value type specified in iterable type array#'
+        - '#has no return type specified#'
+        - '#has parameter .* with no type specified#'
+
+        - '#Cannot call method fetch.*\(\) on PDOStatement\|false#'
+        - '#should return string but returns string\|false#'
+        - '#expects string, string\|false given#'
+        - '#expects callable.*mixed.*given#'
+        - '#should return .* but returns object#'
+        - '#should return array but returns.*false#'
+        - '#should return string.*but returns string.*false.*null#'
+        - '#Parameter.*of function sort expects TArray.*array.*false given#'
+        - '#Parameter.*of class ReflectionClass constructor expects class-string#'
+        - '#Dead catch.*ReflectionException.*never thrown#'
+    
+    reportUnmatchedIgnoredErrors: false
