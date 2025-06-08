@@ -3,9 +3,7 @@
 namespace App\Core\DI;
 
 use App\Contract\FormRequestFactoryInterface;
-use App\Core\Exception\ValidationException;
 use App\Core\FormRequest\AbstractFormRequest;
-use App\Core\FormRequest\AbstractJsonRequest;
 use App\Core\Request;
 use Exception;
 use ReflectionClass;
@@ -206,15 +204,6 @@ class Container
             return $this->resolveFormRequest($className, $provided);
         }
 
-        if (is_subclass_of($className, AbstractJsonRequest::class)) {
-            try {
-                return $this->resolveJsonRequest($className, $provided);
-            } catch (ValidationException $e) {
-                $e->getResponse()->send();
-                exit;
-            }
-        }
-
         return $provided[$index] ?? $this->get($className);
     }
 
@@ -246,25 +235,5 @@ class Container
         }
 
         return $formRequest;
-    }
-
-    private function resolveJsonRequest(string $jsonRequestClass, array $providedParameters): AbstractJsonRequest
-    {
-        $request = null;
-        foreach ($providedParameters as $param) {
-            if ($param instanceof Request) {
-                $request = $param;
-
-                break;
-            }
-        }
-
-        if (!$request) {
-            throw new Exception('Request object is required to resolve JsonRequest');
-        }
-
-        $responseFactory = $this->get('App\\Contract\\ResponseFactoryInterface');
-
-        return new $jsonRequestClass($request, $responseFactory);
     }
 }
