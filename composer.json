@@ -1,0 +1,32 @@
+{
+  "name": "dimaspng/activity-tracker",
+  "description": "User activity tracking application",
+  "version": "1.0.0",
+  "require": {
+    "php": ">=8.3",
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "*",
+    "phpstan/phpstan": "^1.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/",
+      "Database\\": "database/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "scripts": {
+    "cs-fix": "php-cs-fixer fix --allow-risky=yes",
+    "cs-check": "php-cs-fixer fix --dry-run --diff --allow-risky=yes",
+    "phpstan": "phpstan analyse --memory-limit=512M",
+    "phpstan-baseline": "phpstan analyse --generate-baseline",
+    "validate": [
+      "@cs-check",
+      "@phpstan"
+    ]
+  }
+}

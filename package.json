@@ -1,0 +1,16 @@
+{
+  "name": "buy-a-cow",
+  "version": "1.0.0",
+  "description": "User activity tracking system",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --watch",
+    "build-css-prod": "tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --minify"
+  },
+  "author": "Buy A Cow Team",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/forms": "^0.5.7"
+  }
+}
