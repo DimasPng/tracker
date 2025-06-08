@@ -1,0 +1,77 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Core\Database\MigrationManager;
+use App\Core\Database\Connection;
+use App\Core\Environment\EnvironmentService;
+
+$environment = new EnvironmentService();
+Connection::setEnvironmentService($environment);
+
+$manager = new MigrationManager();
+
+$command = $argv[1] ?? 'help';
+
+switch ($command) {
+    case 'migrate':
+        $pendingMigrations = $manager->getPendingMigrations();
+        echo "Migration path: " . $manager->getMigrationsPath() . "\n";
+        echo "Found migration files: " . implode(", ", $manager->getMigrationFiles()) . "\n";
+        echo "Ran migrations: " . implode(", ", $manager->getRanMigrations()) . "\n";
+        
+        if (empty($pendingMigrations)) {
+            echo "No pending migrations.\n";
+            exit(0);
+        }
+
+        foreach ($pendingMigrations as $file) {
+            echo "Migrating: " . basename($file) . "\n";
+            $manager->runMigration($file);
+            echo "Migrated: " . basename($file) . "\n";
+        }
+        break;
+
+    case 'rollback':
+        $lastBatch = $manager->getNextBatchNumber() - 1;
+        if ($lastBatch < 1) {
+            echo "No migrations to rollback.\n";
+            exit(0);
+        }
+
+        $migrations = $manager->getRanMigrations();
+        foreach (array_reverse($migrations) as $migration) {
+            $file = $manager->getMigrationsPath() . '/' . $migration . '.php';
+            if (file_exists($file)) {
+                echo "Rolling back: " . $migration . "\n";
+                $manager->rollbackMigration($file);
+                echo "Rolled back: " . $migration . "\n";
+            }
+        }
+        break;
+
+    case 'status':
+        $ran = $manager->getRanMigrations();
+        $pending = array_map(function($file) {
+            return basename($file, '.php');
+        }, $manager->getPendingMigrations());
+
+        echo "Ran migrations:\n";
+        foreach ($ran as $migration) {
+            echo "  [✓] " . $migration . "\n";
+        }
+
+        echo "\nPending migrations:\n";
+        foreach ($pending as $migration) {
+            echo "  [ ] " . $migration . "\n";
+        }
+        break;
+
+    default:
+        echo "Available commands:\n";
+        echo "  migrate   - Run all pending migrations\n";
+        echo "  rollback  - Rollback the last batch of migrations\n";
+        echo "  status    - Show the status of all migrations\n";
+        break;
+}
